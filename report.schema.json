@@ -1,0 +1,436 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mytestapp20261001-collab/env-loader-audit/blob/main/report.schema.json",
+  "title": "env-loader-audit report v1",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/report"
+    },
+    {
+      "$ref": "#/$defs/error"
+    }
+  ],
+  "$defs": {
+    "source": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "file"
+            },
+            "fileIndex": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "kind",
+            "fileIndex"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "enum": [
+                "external",
+                "absent"
+              ]
+            }
+          },
+          "required": [
+            "kind"
+          ]
+        }
+      ]
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "drift",
+            "manual-review",
+            "no-observed-effective-change"
+          ]
+        },
+        "definite": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "possible": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "manualReview": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "informational": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "exitCode": {
+          "enum": [
+            0,
+            1
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "definite",
+        "possible",
+        "manualReview",
+        "informational",
+        "exitCode"
+      ]
+    },
+    "baseVariable": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+        },
+        "change": {
+          "enum": [
+            "none",
+            "definite",
+            "possible"
+          ]
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "parser",
+              "file-precedence",
+              "external-masking",
+              "masked-difference",
+              "equal-value-provenance",
+              "startup-review"
+            ]
+          }
+        },
+        "manualReview": {
+          "type": "boolean"
+        },
+        "baseline": {
+          "$ref": "#/$defs/source"
+        },
+        "native": {
+          "$ref": "#/$defs/source"
+        }
+      },
+      "required": [
+        "name",
+        "change",
+        "categories",
+        "manualReview",
+        "baseline",
+        "native"
+      ]
+    },
+    "variable": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+        },
+        "change": {
+          "enum": [
+            "none",
+            "definite",
+            "possible"
+          ]
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "parser",
+              "file-precedence",
+              "external-masking",
+              "masked-difference",
+              "equal-value-provenance",
+              "startup-review"
+            ]
+          }
+        },
+        "manualReview": {
+          "type": "boolean"
+        },
+        "baseline": {
+          "$ref": "#/$defs/source"
+        },
+        "native": {
+          "$ref": "#/$defs/source"
+        },
+        "counterfactuals": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "dotenvFirst": {
+              "$ref": "#/$defs/source"
+            },
+            "dotenvLast": {
+              "$ref": "#/$defs/source"
+            },
+            "nodeFirst": {
+              "$ref": "#/$defs/source"
+            },
+            "nodeLast": {
+              "$ref": "#/$defs/source"
+            }
+          },
+          "required": [
+            "dotenvFirst",
+            "dotenvLast",
+            "nodeFirst",
+            "nodeLast"
+          ]
+        },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "parserFiles": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "parserUnderFirst": {
+              "type": "boolean"
+            },
+            "parserUnderLast": {
+              "type": "boolean"
+            },
+            "precedenceUnderDotenv": {
+              "type": "boolean"
+            },
+            "precedenceUnderNode": {
+              "type": "boolean"
+            },
+            "maskedDifference": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "parserFiles",
+            "parserUnderFirst",
+            "parserUnderLast",
+            "precedenceUnderDotenv",
+            "precedenceUnderNode",
+            "maskedDifference"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "change",
+        "categories",
+        "manualReview",
+        "baseline",
+        "native",
+        "counterfactuals",
+        "evidence"
+      ]
+    },
+    "report": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "tool": {
+          "const": "env-loader-audit"
+        },
+        "version": {
+          "type": "string"
+        },
+        "runtime": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "node": {
+              "type": "string"
+            },
+            "dotenv": {
+              "type": "string"
+            },
+            "platform": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "node",
+            "dotenv",
+            "platform"
+          ]
+        },
+        "input": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "index": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "path": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "index",
+                  "path"
+                ]
+              }
+            },
+            "dotenvOverride": {
+              "type": "boolean"
+            },
+            "externalNames": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "files",
+            "dotenvOverride",
+            "externalNames"
+          ]
+        },
+        "assumptions": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "environment": {
+              "const": "posix-case-sensitive"
+            },
+            "externalValues": {
+              "const": "unknown"
+            },
+            "externalNamesComplete": {
+              "const": true
+            },
+            "dotenvParser": {
+              "const": "default-regex"
+            },
+            "nativeParser": {
+              "const": "running-node-util.parseEnv"
+            }
+          },
+          "required": [
+            "environment",
+            "externalValues",
+            "externalNamesComplete",
+            "dotenvParser",
+            "nativeParser"
+          ]
+        },
+        "summary": {
+          "$ref": "#/$defs/summary"
+        },
+        "variables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/variable"
+          }
+        },
+        "reverseCandidate": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "nativeFileOrder": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "summary": {
+              "$ref": "#/$defs/summary"
+            },
+            "variables": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/baseVariable"
+              }
+            }
+          },
+          "required": [
+            "nativeFileOrder",
+            "summary",
+            "variables"
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "tool",
+        "version",
+        "runtime",
+        "input",
+        "assumptions",
+        "summary",
+        "variables"
+      ]
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "tool": {
+          "const": "env-loader-audit"
+        },
+        "error": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "fileIndex": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "code"
+          ]
+        },
+        "exitCode": {
+          "const": 2
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "tool",
+        "error",
+        "exitCode"
+      ]
+    }
+  }
+}

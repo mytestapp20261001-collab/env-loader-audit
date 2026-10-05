@@ -1,0 +1,12 @@
+{
+  "name": "env-loader-audit",
+  "version": "0.1.0",
+  "description": "Offline, values-hidden migration diagnostics from dotenv to Node --env-file",
+  "type": "module",
+  "private": true,
+  "bin": { "env-loader-audit": "bin/env-loader-audit.js" },
+  "scripts": { "test": "node --test", "check": "node --check bin/env-loader-audit.js && node --check src/audit.js && node --test" },
+  "engines": { "node": ">=22.0.0" },
+  "license": "MIT",
+  "dependencies": { "dotenv": "18.0.5" }
+}
